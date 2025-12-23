@@ -35,3 +35,4 @@ root -l -q 'calc_global_polarization.C("output.root", "results.root")'
 # Example usage of main macro
 root -l -q 'root -x -q -b lambdaPolAnal.cpp'
 root -l -q 'root -x -q -b lambdaPolCalc.cpp'
+# mpd_afterburner_stable

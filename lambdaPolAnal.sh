@@ -1,59 +1,60 @@
 #!/bin/bash
-#SBATCH -D "/scratch3/dflusova/afterburner/slurm"
+#SBATCH -D /scratch2/troshin/log
 #SBATCH -J polLambdaAnal
-#SBATCH -p nica
-#SBATCH -a 1-2000
+#SBATCH -p lustre-test
+#SBATCH -a 1-1
 #SBATCH --requeue
-#SBATCH --mem=8G
+#SBATCH --mem=2G
 #SBATCH --time=24:00:00
-#SBATCH --exclude=ncx112,ncx115,ncx117,ncx121,ncx147,ncx153,ncx156,ncx158,ncx159,ncx171,ncx181,ncx207,ncx214,ncx216,ncx222,ncx223,ncx224,ncx225,ncx227,ncx213
+#SBATCH -o /scratch2/troshin/log/%A_%a.log
 # Load necessary environment
-source /cvmfs/nica.jinr.ru/sw/os/login.sh latest
-module add mpddev
-source /lhep/users/dflusova/mpdroot/install/config/env.sh
+# Wait for CVMFS and EOS to be available
+ls /cvmfs/nica.jinr.ru/sw/os/login.sh
+sleep 10
+
+# loading MPDROOT framework
+source /cvmfs/nica.jinr.ru/sw/os/login.sh
+module add mpddev/v25.09.25-1
+export MPDROOT=/scratch2/troshin/mpd_hyperons/mpd
+source $MPDROOT/config/env.sh
 
 # Set job identifiers
 export JOB_ID=${SLURM_ARRAY_JOB_ID}
 export TASK_ID=${SLURM_ARRAY_TASK_ID}
 
 # Define paths (modify these as needed)
-INPUT_DIR="/eos/nica/mpd/users/parfenov/SimData/UrQMD/xexe_2.87gev_mf/6195240/files/mcini/"
-CONFIG_DIR="/lhep/users/dflusova/lambda/afterburner/v.6/"
-# OUTPUT_DIR="/lhep/users/dflusova/lambda/afterburner/v.6/out/"
-OUTPUT_DIR="/scratch3/dflusova/afterburner/out/"
+INPUT_DIR="/eos/nica/mpd/users/parfenov/UrQMD/xexe_2.87gev_mf/12948799/files/mcini/"
+CONFIG_DIR="/scratch2/troshin/govorun_backup/mpd_uni/latest/dar_flu_lar/global-polarization-/"
+OUTPUT_DIR="/scratch2/troshin/mpd_hyperons/mpd_xexe_2.87_enh_lamb_20/afterburner_out/final12948799/"
 
-# Wait for CVMFS and EOS to be available
-for i in {1..5}; do
-    ls /cvmfs/ >/dev/null 2>&1 && ls /eos/nica/ >/dev/null 2>&1 && break
-    sleep 15
-done
-
+mkdir -p $OUTPUT_DIR
 # Create unique working directory
 WORK_DIR="${CONFIG_DIR}lambda_analysis"
 mkdir -p "${WORK_DIR}" || { echo "Failed to create working directory"; exit 1; }
 cd "${WORK_DIR}" || { echo "Failed to enter working directory"; exit 1; }
-
+echo "Enter working directory"
 # Build file names
-INPUT_FILE="urqmd_xexe_2.87gev_mf_6195240_${TASK_ID}.mcini.root"
+INPUT_FILE="urqmd_xexe_2.87gev_mf_12948799_${TASK_ID}.mcini.root"
 CONFIG_FILE="qa_out_xexe.root"
-OUTPUT_FILE="result_urqmd_xexe_2.87gev_mf_6195240_${TASK_ID}.mcini.root"
-# POLARIZATION_OUTPUT="result_global_polarization_urqmd_xexe_2.87gev_mf_6195240_${TASK_ID}.mcini.root"
+OUTPUT_FILE="result_urqmd_xexe_2.87gev_mf_12948799_${TASK_ID}.mcini.root"
 
-#cd "${CONFIG_DIR}"
 
 # Run the analysis with timing measurement
 echo "Starting analysis for task ${TASK_ID} at $(date)"
 START_TIME=$(date +%s)
 
-
+cd ${CONFIG_DIR}
+root -l -q ${CONFIG_DIR}/generate_dicts.c
 # Run the analysis
 root -l -b <<EOF
 gSystem->Load("${CONFIG_DIR}AutoDict_vector_TVector3__cxx.so")
 gSystem->Load("${CONFIG_DIR}AutoDict_vector_UParticle__cxx.so")
+gSystem->Load("${CONFIG_DIR}AutoDict_std__vector_ROOT__Math__XYZVector__cxx.so")
 gSystem->Load("${CONFIG_DIR}AutoDict_vector_TVector3__cxx.so")
 gSystem->Load("${CONFIG_DIR}AutoDict_vector_UParticle__cxx.so")
+gSystem->Load("${CONFIG_DIR}AutoDict_std__vector_ROOT__Math__XYZVector__cxx.so")
 .L ${CONFIG_DIR}read_unigen_root.cpp
-simulate_lambda_decays("${INPUT_DIR}${INPUT_FILE}", "${OUTPUT_DIR}${OUTPUT_FILE}", "${CONFIG_DIR}${CONFIG_FILE}", 50)
+simulate_lambda_decays("${INPUT_DIR}${INPUT_FILE}", "${OUTPUT_DIR}${OUTPUT_FILE}", "${CONFIG_DIR}${CONFIG_FILE}", 0)
 .q
 EOF
 
@@ -71,7 +72,6 @@ else
     exit 1
 fi
 
-# Cleanup
-cd "${TMP}" && rm -rf "${WORK_DIR}"
-
 echo "Job ${TASK_ID} completed successfully"
+
+
