@@ -1,14 +1,9 @@
 # Global Polarization of Λ Hyperons at the MPD Experiment
 
 The afterburner for hyperon global polarization setting and analysis. Utilizes UrQMD modeling data.
-
 ## Description
 
-How to run:
-
-1. `simulate_lambda_decays(TString inputFile, TString outputFile, Int_t flag = 1, Int_t enhanceStat = 1)`  
-
----
+Afterburner of lambda for HIC in UniGen format with realistic parameterization of directed and elliptic flow and global polarization(parapeterized from the exp data).
 
 ## Requirements
 
