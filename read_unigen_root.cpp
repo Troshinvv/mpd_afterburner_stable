@@ -31,7 +31,6 @@
 #include "TInterpreter.h"
 
 
-void simulate_lambda_decays(TString inputFile, TString outputFile, TString confInFile, Int_t enhanceStat = 0);
 void set_lambda_parameterization(TFile* Lambda_yield, Double_t fBVal, UParticle &ULambda); 
 
 Double_t get_mean_polarization(Double_t sNN, Double_t centrality);// Value in % 
@@ -48,7 +47,7 @@ class TClonesArray;
 class UParticle;
 
 
-void simulate_lambda_decays(TString inputFile, TString outputFile, TString confInFile, Int_t enhanceStat) {
+void read_unigen_root(TString inputFile, TString outputFile, TString confInFile, Int_t enhanceStat) {
 
 
     TChain *inChain = nullptr;

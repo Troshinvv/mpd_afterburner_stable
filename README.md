@@ -4,16 +4,9 @@ The afterburner for hyperon global polarization setting and analysis. Utilizes U
 
 ## Description
 
-This project consists of two separate parts:
+How to run:
 
 1. `simulate_lambda_decays(TString inputFile, TString outputFile, Int_t flag = 1, Int_t enhanceStat = 1)`  
-   - Simulation of Λ decay into proton and pion
-   - Global polarization is measured with proton polarization
-   - Macro produces secondary particles and then puts polarization in proton
-
-2. `calc_global_polarization(TString InFileName, TString OutFileName)`  
-   - Measures global polarization with macro that provides transverse momentum and rapidity binning
-   - Fits resulting angular distribution to get the value of global polarization
 
 ---
 
@@ -23,16 +16,25 @@ The afterburner is intended to work with UrQMD generated data in unigen format.
 
 ## Usage
 
-First run root with commands:
-```bash
-gInterpreter->GenerateDictionary("vector<UParticle>", "vector;UParticle.h");
-gInterpreter->GenerateDictionary("vector<TVector3>", "vector;TVector3.h");
-
+First run generate_dicts.c in temporary directory
+Second upload dictionaries into root session and run read_unigen_root.cpp
+ 
 ```bash
 # Example usage of functions
-root -l -q 'simulate_lambda_decays.C("input.root", "output.root")'
-root -l -q 'calc_global_polarization.C("output.root", "results.root")'
-# Example usage of main macro
-root -l -q 'root -x -q -b lambdaPolAnal.cpp'
-root -l -q 'root -x -q -b lambdaPolCalc.cpp'
+
+cd ${CONFIG_DIR}
+root -l -q ${CONFIG_DIR}/generate_dicts.c
+
+root -l -b <<EOF
+gSystem->Load("${CONFIG_DIR}AutoDict_vector_TVector3__cxx.so")
+gSystem->Load("${CONFIG_DIR}AutoDict_vector_UParticle__cxx.so")
+gSystem->Load("${CONFIG_DIR}AutoDict_std__vector_ROOT__Math__XYZVector__cxx.so")
+gSystem->Load("${CONFIG_DIR}AutoDict_vector_TVector3__cxx.so")
+gSystem->Load("${CONFIG_DIR}AutoDict_vector_UParticle__cxx.so")
+gSystem->Load("${CONFIG_DIR}AutoDict_std__vector_ROOT__Math__XYZVector__cxx.so")
+.L ${CONFIG_DIR}read_unigen_root.cpp
+read_unigen_root("${INPUT_DIR}${INPUT_FILE}", "${OUTPUT_DIR}${OUTPUT_FILE}", "${CONFIG_DIR}${CONFIG_FILE}", 0)
+.q
+EOF
+
 # mpd_afterburner_stable

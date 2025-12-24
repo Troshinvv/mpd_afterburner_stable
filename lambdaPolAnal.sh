@@ -35,7 +35,7 @@ cd "${WORK_DIR}" || { echo "Failed to enter working directory"; exit 1; }
 echo "Enter working directory"
 # Build file names
 INPUT_FILE="urqmd_xexe_2.87gev_mf_12948799_${TASK_ID}.mcini.root"
-CONFIG_FILE="qa_out_xexe.root"
+CONFIG_FILE="lamb_config.root"
 OUTPUT_FILE="result_urqmd_xexe_2.87gev_mf_12948799_${TASK_ID}.mcini.root"
 
 
@@ -54,7 +54,7 @@ gSystem->Load("${CONFIG_DIR}AutoDict_vector_TVector3__cxx.so")
 gSystem->Load("${CONFIG_DIR}AutoDict_vector_UParticle__cxx.so")
 gSystem->Load("${CONFIG_DIR}AutoDict_std__vector_ROOT__Math__XYZVector__cxx.so")
 .L ${CONFIG_DIR}read_unigen_root.cpp
-simulate_lambda_decays("${INPUT_DIR}${INPUT_FILE}", "${OUTPUT_DIR}${OUTPUT_FILE}", "${CONFIG_DIR}${CONFIG_FILE}", 0)
+read_unigen_root("${INPUT_DIR}${INPUT_FILE}", "${OUTPUT_DIR}${OUTPUT_FILE}", "${CONFIG_DIR}${CONFIG_FILE}", 0)
 .q
 EOF
 
