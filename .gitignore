@@ -9,9 +9,8 @@
 *.bak
 *.tmp
 
-#out file
+#out files
 *.root
-
 #test files
 test*
 

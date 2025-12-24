@@ -10,6 +10,7 @@ The afterburner is intended to work with UrQMD generated data in unigen format.
 
 First run generate_dicts.c in temporary directory
 Second upload dictionaries into root session and run read_unigen_root.cpp
+lamb_config.root consists pt-y distributions of lambda hyperons for parameterization. Use it as config file(3rd argument)
  
 ```bash
 # Example usage of functions
