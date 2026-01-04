@@ -290,16 +290,17 @@ Double_t get_random_value(Double_t fMean, Double_t fSigma)
 	Double_t centrality = get_centrality(fBVal); //centrality for parameterization (b->centrality for Xe+Xe below)
 	Double_t sNN = 2.87; // Energy of the collision in center-of-mass system
 
-	TH2F* h_pt_y;
+/*	TH2F* h_pt_y;
 	if(centrality<10) h_pt_y = (TH2F*) Lambda_yield->Get("h2PartYpT010");
 	else if(centrality>10 && centrality <40) h_pt_y = (TH2F*) Lambda_yield->Get("h2PartYpT");
 	else h_pt_y = (TH2F*) Lambda_yield->Get("h2PartYpT40100");
-
-
+*/
+	 Double_t lambda_mass = 1.115683; // GeV/c² (Lambda mass)
     Double_t lambda_pT; // pT of Lambda from pT-y TH2F
 	Double_t lambda_y;  // rapidity of Lambda from pT-y TH2F
-
-	h_pt_y->GetRandom2(lambda_y,lambda_pT,rand);
+	lambda_pT = TMath::Sqrt(ULambda.Px()*ULambda.Px()+ULambda.Py()*ULambda.Py());
+	lambda_y = 0.5* TMath::Log((ULambda.E()+ULambda.Pz())/(ULambda.E()-ULambda.Pz()));
+//	h_pt_y->GetRandom2(lambda_y,lambda_pT,rand);
 
 	Double_t v1 = (28.8635/(TMath::Power(sNN,2.89092))) 
                 * ((-0.0233*centrality+0.5413* TMath::Power(centrality,1./3) ) 
@@ -329,7 +330,6 @@ Double_t get_random_value(Double_t fMean, Double_t fSigma)
     // Calculate total energy (E) properly
     TLorentzVector vec;
     // Calculate transverse mass (m_T)
-    Double_t lambda_mass = 1.115683; // GeV/c² (Lambda mass)
     Double_t mT = sqrt(lambda_pT * lambda_pT + lambda_mass * lambda_mass);
     // Convert rapidity (y) to pseudorapidity (η)
     Double_t pz = mT * sinh(lambda_y); // longitudinal momentum
